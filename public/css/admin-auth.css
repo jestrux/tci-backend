@@ -1,0 +1,116 @@
+body, html{
+	padding: 0;
+	margin: 0;
+}
+
+body{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+	background: #f0f0f0;
+	font-family: verdana, sans-serif;
+}
+
+*{
+	box-sizing: border-box;
+}
+
+form{
+	position: relative;
+	background-color: #fff;
+	padding: 20px 50px;
+	padding-top: 215px;
+	box-shadow: 1px 1px 6px rgba(0,0,0,0.12);
+	overflow: hidden;
+	border-radius: 4px;
+	width: 450px;
+}
+
+form .round-bg{
+	position: absolute;
+	top: -455px; left:-15%;
+	width: 130%;
+	height: 650px;
+	border-radius: 1950px;
+	background-color: #f5f9fc;
+	box-shadow: 0 1px 3px rgba(90,90,90,0.2);
+}
+
+form .form-header{
+	position: relative;
+	z-index: 1;
+	text-align: center;
+	margin-top: -180px;
+	margin-bottom: 80px;
+}
+
+form .form-header h1{
+	font-size: 1.25em;
+    margin-top: 0.95em;
+    text-transform: uppercase;
+    color: #244e6c;
+}
+
+form .link{
+	font-weight: bold;
+	display: inline-block;
+	color: #888;
+	position: absolute;
+	right: 30px;
+	top: 30px;
+	font-family: verdana;
+}
+
+form .input-wrapper{
+	margin-bottom: 30px;
+}
+
+form .input-wrapper span,
+form .input-wrapper select,
+form .input-wrapper input{
+	display: block;
+	width: 100%;
+}
+
+form .input-wrapper span{
+	font-size: 1.15em;
+	color: #444;
+}
+
+form .input-wrapper select, 
+form .input-wrapper input{
+	margin-top: 0.2em;
+	margin-bottom: 1em;
+	background-color: transparent;
+	font-size: 18px;
+	padding: 0.3em 0.6em;
+	height: 40px;
+	border: 1px solid #bbb;
+	min-width: 220px;
+	outline: none;
+	-webkit-transition: all 0.35s ease-in-out;
+	-o-transition: all 0.35s ease-in-out;
+	transition: all 0.35s ease-in-out;
+}
+
+form .input-wrapper select:focus, 
+form .input-wrapper input:focus{
+	border-bottom: 1px solid #333;
+}
+
+form input[type="submit"], form button{
+	background-color: transparent;
+	border: 1px solid #999;
+	display: block;
+	width: 100%;
+	text-transform: uppercase;
+	padding: 12px 0;
+	font-size: 16px;
+	color: #444;
+	margin-bottom: 22px;
+	cursor: pointer;
+	color: #fff;
+    background-color: #244e6c;
+    border: 3px solid #1a3c54;
+}
