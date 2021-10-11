@@ -52,80 +52,39 @@ export const setSelectedRecord = ({ commit }, recordId) => {
     commit('SET_SELECTED_RECORD', recordId);
 }
 
-export const createRecord = async ({ commit, state }, data) => {
+export const createRecord = async ({ dispatch, commit, state }, data) => {
     commit('SAVING_RECORD', true);
     try {
         let record = await insertRecord(state.selectedModelName, data);
         
         commit('SAVING_RECORD', false);
-        let records = state.records;
-        if (!records)
-            records = [];
-
-        records.unshift(record);
-
-        commit('SET_RECORDS', records);
+        
         router.replace(`/${state.selectedModelName}`);
         showSuccessToast(`${state.selectedModelName} created`);
+        dispatch('fetchRecords');
     } catch (error) {
         handleNetworkError(error, `Error creating ${state.selectedModelName}:`);
         commit('SAVING_RECORD', false);
     }
 }
 
-export const editRecord = async ({ commit, state }, data) => {
+export const editRecord = async ({ dispatch, commit, state }, data) => {
     commit('SAVING_RECORD', true);
     try {
-        let record = await updateRecord(state.selectedModelName, data);
+        const record = await updateRecord(state.selectedModelName, data);
         
         commit('SAVING_RECORD', false);
-        let records = state.records;
-        if (!records)
-            records = [];
-
-        records = records.map(record => {
-            if(record._id == data._id)
-                return data;
-
-            return record;
-        });
-
-        commit('SET_RECORDS', records);
+        
         router.replace(`/${state.selectedModelName}`);
         showSuccessToast(`${state.selectedModelName} updated`);
+        dispatch('fetchRecords');
     } catch (error) {
         handleNetworkError(error, `Error creating ${state.selectedModelName}:`);
         commit('SAVING_RECORD', false);
     }
 }
 
-export const updateModel = async ({ commit, state }, updatedRecord) => {
-    commit('SAVING_RECORD', true);
-    try {
-        // await saveModel(state.selectedModelName, updatedRecord);
-        // commit('SAVING_RECORD', false);
-
-        // let records = state.records;
-        // if (!records)
-        //     records = [];
-
-        // records = records.map(record => {
-        //     if (record._id === updatedRecord._id)
-        //         return updatedrecord;
-
-        //     return record;
-        // });
-
-        // commit('SET_RECORDS', records);
-        // router.replace(`/${state.selectedModelName}`);
-        // showSuccessToast(`${state.selectedModelName} updated`);
-    } catch (error) {
-        // handleNetworkError(error, `Error updating ${state.selectedModelName}:`);
-        // commit('SAVING_RECORD', false);
-    }
-}
-
-export const removeRecord = async ({ commit, state }, recordId) => {
+export const removeRecord = async ({ dispatch, commit, state }, recordId) => {
     if(!state.selectedModelName)
         return;
         
@@ -133,16 +92,10 @@ export const removeRecord = async ({ commit, state }, recordId) => {
     try {
         await deleteRecord(state.selectedModelName, recordId);
         commit('DELETING_RECORD', false);
-
-        let records = state.records;
-        if (!records)
-            records = [];
-
-        records = records.filter(({_id}) => _id !== recordId);
-
-        commit('SET_RECORDS', records);
+        
         router.replace(`/${state.selectedModelName}`);
         showSuccessToast(`${state.selectedModelName} deleted`);
+        dispatch('fetchRecords');
     } catch (error) {
         handleNetworkError(error, `Error deleting ${state.selectedModelName}:`);
         commit('DELETING_RECORD', false);
