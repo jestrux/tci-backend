@@ -91,15 +91,29 @@
                 This model doesn't contain any records yet.
               </p>
 
-              <button class="mb-2 mr-2 rounded-btn border border-blue-800 capitalize text-blue-800 text-base mt-0 ml-3"
-                @click="populateRecords(30)">
-                Populate <span class="font-bold">30</span> sample records
-              </button>
+              <div class="flex items-center justify-center">
+                <button class="mb-2 rounded-btn border border-blue-800 lowercase text-blue-800 text-sm mt-0 ml-1"
+                  @click="populateRecords(5)">
+                  Populate <span class="font-bold">5</span> records
+                </button>
 
-              <button class="mb-2 rounded-btn border border-blue-800 capitalize text-blue-800 text-base mt-0 ml-3"
-                @click="populateRecords(50)">
-                Populate <span class="font-bold">50</span> sample records
-              </button>
+                <button class="mb-2 rounded-btn border border-blue-800 lowercase text-blue-800 text-sm mt-0 ml-1"
+                  @click="populateRecords(10)">
+                  Populate <span class="font-bold">10</span> records
+                </button>
+              </div>
+
+              <div class="mx-auto mt-2" style="max-width: 500px">
+                <DropArea 
+                  placeholder="Drag and drop Pier table data JSON File here." 
+                  @selected="handleTableDataSelected($event)"
+                />
+              </div>
+
+              <!-- <button class="mb-2 rounded-btn border border-blue-800 lowercase text-blue-800 text-sm mt-0 ml-1"
+                @click="importJSON()">
+                import JSON file
+              </button> -->
             </div>
           </td>
         </tr>
@@ -121,6 +135,7 @@
   import Paginate from 'vuejs-paginate';
   import { populateModel } from "../../../API";
   import TableRow from "./TableRow";
+  import DropArea from "./DropArea";
   import { mapState } from 'vuex';
 
   export default {
@@ -155,9 +170,25 @@
       populateRecords(itemCount){
         this.$store.dispatch('populateRecords', itemCount);
       },
+      handleTableDataSelected(files) {
+        if(files && files.length){
+          const tableData = files[0];
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const importedData = JSON.parse(e.target.result);
+            for (let index = 0; index < importedData.length; index++) {
+              const entry = importedData[index];
+              console.log("Imported data entry: ", entry);
+              this.$store.dispatch("createRecord", entry);
+            }
+          }
+          reader.readAsText(tableData);
+        }
+      },
     },
     components: {
       TableRow,
+      DropArea,
       Paginate
     }
   }

@@ -44,7 +44,7 @@ Route::prefix('model')->group(function () {
     // });
     Route::get('{model_name}/truncate', 'EditorController@truncate');
     Route::get('{model_name}/drop', 'EditorController@drop');
-    Route::get('{model_name}/populate', 'EditorController@populate');
+    Route::post('{model_name}/populate', 'EditorController@populate');
     Route::get('{model_name}/describe', 'EditorController@describe');
     Route::get('{model_name}/settings', 'EditorController@settings');
     Route::patch('{model_name}', 'EditorController@update');
