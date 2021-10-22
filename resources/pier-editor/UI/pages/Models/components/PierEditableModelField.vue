@@ -389,8 +389,12 @@ export default {
       if (!newValue) this.field.defaultValue = "null";
     },
     defaultValue: function (newValue) {
-      if (newValue == "other") this.focusInput("fieldDefaultValue");
-      else this.field.default = undefined;
+      if(newValue == "null") 
+        this.field.default = undefined;
+      else if (newValue == "other") 
+        this.focusInput("fieldDefaultValue");
+      else
+        this.field.default = newValue;
     },
   },
   methods: {

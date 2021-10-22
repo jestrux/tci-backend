@@ -46,6 +46,7 @@ Route::prefix('model')->group(function () {
     Route::get('{model_name}/drop', 'EditorController@drop');
     Route::post('{model_name}/populate', 'EditorController@populate');
     Route::get('{model_name}/describe', 'EditorController@describe');
+    Route::get('{model_name}/fields', 'EditorController@fields');
     Route::get('{model_name}/settings', 'EditorController@settings');
     Route::patch('{model_name}', 'EditorController@update');
     Route::patch('{model_name}/addField', 'EditorController@add_field');

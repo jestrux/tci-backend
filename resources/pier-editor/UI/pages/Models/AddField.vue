@@ -133,6 +133,9 @@ export default {
       };
 
       const fieldOptions = {...field.type.options};
+      
+      delete fieldDetails.defaultValue;
+
       let fieldMeta = {};
       for (let [key, option] of Object.entries(fieldOptions)) {
         if(option.value !== undefined)

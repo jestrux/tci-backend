@@ -372,8 +372,12 @@ class PierMigration extends Model{
         
         foreach ($regular_fields as $field) {
             $value = isset($data[$field->label]) ? $data[$field->label] : null;
-            if(is_null($value) && isset($field->default))
-                $value = $field->default;
+            if(is_null($value) && isset($field->default)){
+                if($field->type == "date")
+                    $value = \Carbon\Carbon::now()->toDateTimeString();
+                else
+                    $value = $field->default;
+            }
 
             if($field->type === 'password')
                 $entry[$field->label] = Hash::make($value);
@@ -817,12 +821,12 @@ class PierMigration extends Model{
                 break;
         }
 
-        if($type !== 'reference'){
+        if($type != 'reference'){
             if(!$required){
                 if(is_null($default))
                     $processed->nullable();
                 else{
-                    if($type === 'date')
+                    if($type == 'date')
                         $processed->useCurrent();
                     else
                         $processed->default($default);

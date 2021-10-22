@@ -41,6 +41,11 @@ class EditorController extends Controller
         return response()->json($res);
     }
     
+    public function fields($model){
+        $res = PierMigration::model_fields($model);
+        return response()->json($res);
+    }
+
     public function settings($model){
         $res = PierMigration::settings($model);
         return response()->json($res);

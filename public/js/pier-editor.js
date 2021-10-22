@@ -6339,7 +6339,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             type: field.type.value
           });
 
-          delete fieldDetails.defaultValue; // if(fieldDetails.default == undefined) delete fieldDetails.default;
+          delete fieldDetails.defaultValue;
 
           var fieldOptions = _objectSpread({}, field.type.options);
 
@@ -6547,6 +6547,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   type: field.type.value
                 });
                 fieldOptions = _objectSpread({}, field.type.options);
+                delete fieldDetails.defaultValue;
                 fieldMeta = {};
 
                 for (_i = 0, _Object$entries = Object.entries(fieldOptions); _i < _Object$entries.length; _i++) {
@@ -6561,10 +6562,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   placement: _this2.newFieldPlacement
                 };
                 if (_this2.newFieldPlacement == 'after') data.after = _this2.newFieldPlacementAfter;
-                _context.next = 10;
+                _context.next = 11;
                 return Object(_services_API__WEBPACK_IMPORTED_MODULE_6__["saveNewModelField"])(_this2.modelBeingEdited.name, data);
 
-              case 10:
+              case 11:
                 res = _context.sent;
 
                 _this2.$store.dispatch('updateModelBeingEditedDetails', {
@@ -6573,7 +6574,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                 _this2.$router.replace("/models/".concat(res._id, "/details"));
 
-              case 13:
+              case 14:
               case "end":
                 return _context.stop();
             }
@@ -9743,7 +9744,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (!newValue) this.field.defaultValue = "null";
     },
     defaultValue: function defaultValue(newValue) {
-      if (newValue == "other") this.focusInput("fieldDefaultValue");else this.field["default"] = undefined;
+      if (newValue == "null") this.field["default"] = undefined;else if (newValue == "other") this.focusInput("fieldDefaultValue");else this.field["default"] = newValue;
     }
   },
   methods: {

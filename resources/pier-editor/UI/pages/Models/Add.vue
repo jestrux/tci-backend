@@ -199,7 +199,6 @@ export default {
           };
 
           delete fieldDetails.defaultValue;
-          // if(fieldDetails.default == undefined) delete fieldDetails.default;
 
           const fieldOptions = {...field.type.options};
           let fieldMeta = {};
