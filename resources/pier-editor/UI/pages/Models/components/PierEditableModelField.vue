@@ -1,16 +1,16 @@
 <style>
-.fieldItem:not(:hover) .fieldActionButtons{
+.fieldItem:not(:hover) .fieldActionButtons {
   display: none;
 }
 
-#fieldTypeOptions{
+#fieldTypeOptions {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 0.8rem;
   /* margin-top: -2rem; */
   user-select: none;
 }
-.action-label{
+.action-label {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -23,47 +23,64 @@
   font-size: 0.8rem;
   text-transform: capitalize;
 }
-.action-label.active{
+.action-label.active {
   border-color: #8c6d52;
   background: #28231f;
   color: #ffba7f;
 }
 
-.action-label svg{
+.action-label svg {
   display: inline-block;
   margin-bottom: 0.2rem;
 }
 
-.action-label span:last-child{
+.action-label span:last-child {
   display: block;
   width: 100%;
 }
 
-.action-label input{
-  display: none !important
+.action-label input {
+  display: none !important;
 }
 </style>
 <template>
-  <c-pseudo-box role="group" mb="0" :pointerEvents="!selectable ? 'none' : 'auto'">
+  <c-pseudo-box
+    role="group"
+    mb="0"
+    :pointerEvents="!selectable ? 'none' : 'auto'"
+  >
     <div style="margin-bottom: -0.6rem">
       <c-box rounded="md" color="#777" px="4" py="3" background="#222">
-        <c-box mb="1" d="flex" align-items="center" justify-content="space-between">
+        <c-box
+          mb="1"
+          d="flex"
+          align-items="center"
+          justify-content="space-between"
+        >
           <c-box d="flex" align-items="center">
             <c-box mr="3">
-              <MDIcon :icon="field.type && field.type.value ? field.type.value : 'down'" :size="20" />
+              <MDIcon
+                :icon="
+                  field.type && field.type.value ? field.type.value : 'down'
+                "
+                :size="20"
+              />
             </c-box>
 
             <c-text fontSize="lg" color="#999">
-              <span style="color: #555" v-if="!field.type || !field.type.label">Pick field type</span>
+              <span style="color: #555" v-if="!field.type || !field.type.label"
+                >Pick field type</span
+              >
               <span v-else>
-                  {{ field.label || 'New Field'}}
-                </span>
+                {{ field.label || "New Field" }}
+              </span>
             </c-text>&nbsp;
             <c-text
               fontSize="md"
               color="#777"
               v-if="field.type && field.type.label"
-            >( {{ field.type.label.toLowerCase() }} )</c-text>
+              >( {{ field.type.label.toLowerCase() }} )</c-text
+            >
           </c-box>
 
           <template v-if="hasCancelListener">
@@ -76,17 +93,23 @@
                 color="#777"
                 @click="$emit('removeField')"
               >
-                <c-icon v-if="!field.type || !field.type.label" name="close" size="11px" mr="3" />Cancel
+                <c-icon
+                  v-if="!field.type || !field.type.label"
+                  name="close"
+                  size="11px"
+                  mr="3"
+                />Cancel
               </c-button>
 
-              <c-button v-if="field.type && field.type.label"
-                  size="sm"
-                  :disabled="!field.label || !field.type || !field.type.label"
-                  ml="3"
-                  px="4"
-                  variant-color="orange"
-                  @click="$emit('cancelAddField')"
-                >
+              <c-button
+                v-if="field.type && field.type.label"
+                size="sm"
+                :disabled="!field.label || !field.type || !field.type.label"
+                ml="3"
+                px="4"
+                variant-color="orange"
+                @click="$emit('cancelAddField')"
+              >
                 Done
               </c-button>
             </c-box>
@@ -95,7 +118,7 @@
               v-else
               opacity="0"
               pointerEvents="none"
-              :_groupHover="{ opacity: 1, pointerEvents: 'auto'}"
+              :_groupHover="{ opacity: 1, pointerEvents: 'auto' }"
             >
               <c-button
                 size="sm"
@@ -103,17 +126,22 @@
                 color="#777"
                 @click="$emit('selectField')"
               >
-                  Edit
+                Edit
               </c-button>
 
-              <c-button size="sm" variant="ghost" color="red.200" 
-                  @click="$emit('removeField')">
-                  Remove
+              <c-button
+                size="sm"
+                variant="ghost"
+                color="red.200"
+                @click="$emit('removeField')"
+              >
+                Remove
               </c-button>
             </c-pseudo-box>
           </template>
 
-          <c-button v-else-if="field.type && field.type.label"
+          <c-button
+            v-else-if="field.type && field.type.label"
             size="sm"
             variant="link"
             color="#777"
@@ -125,47 +153,90 @@
 
         <template v-if="selected">
           <c-box my="3">
-            <div style="color:#999">
-              <form v-if="field.type && field.type.value" action="#" 
-                  @submit.prevent="field.label.length ? $emit('cancelAddField') : null">
+            <div style="color: #999">
+              <form
+                v-if="field.type && field.type.value"
+                action="#"
+                @submit.prevent="
+                  field.label.length ? $emit('cancelAddField') : null
+                "
+              >
                 <c-form-control mb="6">
-                  <c-form-label color="#777" fontSize="lg" for="fieldLabel">Field Label</c-form-label>
+                  <c-form-label color="#777" fontSize="lg" for="fieldLabel"
+                    >Field Label</c-form-label
+                  >
                   <c-input
                     id="fieldLabel"
                     type="text"
-                    :placeholder="field.type ? field.type.placeholder : 'E.g description'"
+                    :placeholder="
+                      field.type ? field.type.placeholder : 'E.g description'
+                    "
                     size="md"
                     v-model="field.label"
                   />
                 </c-form-control>
 
                 <PierModelReferenceFieldOption
-                  v-if="['reference', 'multi-reference'].includes(field.type.value)"
+                  v-if="
+                    ['reference', 'multi-reference'].includes(field.type.value)
+                  "
                   v-model="field.type.options"
                 />
-                
+
                 <PierModelStatusFieldOption
                   v-else-if="field.type.value === 'status'"
                   v-model="field.type.options"
                 />
 
                 <template v-else>
-                  <PierModelFieldOption :key="key"
+                  <PierModelFieldOption
+                    :key="key"
                     v-for="(option, key) in field.type.options"
                     v-model="field.type.options[key]"
                   />
                 </template>
 
-                <c-form-control mb="6">
-                    <c-switch id="required" mr="2"
-                      color="orange" size="md"
-                      v-model="field.required"
-                    />
+                <c-form-control>
+                  <c-switch
+                    id="required"
+                    mr="2"
+                    color="orange"
+                    size="md"
+                    v-model="field.required"
+                  />
 
-                    <c-form-label html-for="required">
-                      This field is required
-                    </c-form-label>
+                  <c-form-label html-for="required">
+                    This field is required
+                  </c-form-label>
                 </c-form-control>
+
+                <c-stack isInline spacing="3" v-if="!field.required">
+                  <c-form-control flexShrink="0" flex="1" mt="3" mb="3">
+                    <c-form-label color="#777" fontSize="lg">
+                      Field Default Value
+                    </c-form-label>
+                    <c-select
+                      v-model="field.defaultValue"
+                      placeholder="Choose one"
+                    >
+                      <option value="null">Null</option>
+                      <option value="currentTimestamp" v-if="field.type && field.type.value == 'date'">
+                        Current Timestamp
+                      </option>
+                      <option v-else-if="field.type && fieldTypesWithCustomDefaultValue.includes(field.type.value)" value="other">Other</option>
+                    </c-select>
+                  </c-form-control>
+
+                  <c-box flexShrink="0" flex="1" mt="3" mb="3">
+                    <PierModelFieldDefaultValue
+                      v-show="field.defaultValue == 'other'"
+                      ref="fieldDefaultValue"
+                      size="md"
+                      :value="field"
+                      @input="field.default = $event"
+                    />
+                  </c-box>
+                </c-stack>
               </form>
 
               <c-form-control v-if="!field.type || !field.type.value">
@@ -176,11 +247,13 @@
                         :key="index"
                         :for="`dbFieldtype${type.value}`"
                         class="action-label text-center"
-                        :class="{'active' : field.type && field.type.value === type.value}"
+                        :class="{
+                          active: field.type && field.type.value === type.value,
+                        }"
                         @click="setFieldType(type)"
                       >
                         <MDIcon :icon="type.value" :size="32" />
-                        <span>{{type.label}}</span>
+                        <span>{{ type.label }}</span>
                       </label>
                     </template>
 
@@ -188,7 +261,7 @@
                       :for="`dbFieldtypeStatus`"
                       class="action-label text-center"
                       :class="{
-                        'active' : field.type && field.type.value === 'status'
+                        active: field.type && field.type.value === 'status',
                       }"
                       @click="setFieldType('status')"
                     >
@@ -200,21 +273,24 @@
                       :for="`dbFieldtypeReference`"
                       class="action-label text-center"
                       :class="{
-                        'active' : field.type && field.type.value === 'reference',
-                        'pointer-events-none opacity-50': !models || !models.length
+                        active: field.type && field.type.value === 'reference',
+                        'pointer-events-none opacity-50':
+                          !models || !models.length,
                       }"
                       @click="setFieldType('reference')"
                     >
                       <MDIcon icon="reference" :size="32" />
                       <span>Reference</span>
                     </label>
-                    
+
                     <label
                       :for="`dbFieldtypeMultiReference`"
                       class="action-label text-center"
                       :class="{
-                        'active' : field.type && field.type.value === 'multi-reference',
-                        'pointer-events-none opacity-50': !models || !models.length
+                        active:
+                          field.type && field.type.value === 'multi-reference',
+                        'pointer-events-none opacity-50':
+                          !models || !models.length,
                       }"
                       @click="setFieldType('multi-reference')"
                     >
@@ -244,6 +320,7 @@ import {
   CFormLabel,
   CFormHelperText,
   CInput,
+  CSelect,
   CCheckbox,
   CSwitch,
 } from "@chakra-ui/vue";
@@ -253,77 +330,104 @@ import MDIcon from "./MDIcon";
 import PierModelReferenceFieldOption from "./PierModelReferenceFieldOption";
 import PierModelStatusFieldOption from "./PierModelStatusFieldOption";
 import PierModelFieldOption from "./PierModelFieldOption";
+import PierModelFieldDefaultValue from "./PierModelFieldDefaultValue";
 
-import { mapState } from 'vuex';
+import { mapState } from "vuex";
 
 export default {
   name: "PierEditableModelField",
   props: {
-    editing: Boolean, 
-    selectable: Boolean, 
-    selected: Boolean, 
-    value: Object
+    editing: Boolean,
+    selectable: Boolean,
+    selected: Boolean,
+    value: Object,
   },
   data() {
     return {
       dbFieldTypes,
       field: {
         label: "",
-        type: {}
-      }
+        type: {},
+      },
+      fieldTypesWithCustomDefaultValue: [
+        "string",
+        "long text",
+        "number",
+        "name",
+        "email",
+        "phone",
+        'color',
+        // 'image',
+        // 'file',
+        // 'link',
+        // 'location',
+        // 'rating',
+        // 'boolean',
+      ],
     };
   },
   computed: {
-    ...mapState(['models']),
-    hasCancelListener(){
-      return this.$listeners && this.$listeners.cancelAddField
-    }
+    ...mapState(["models"]),
+    hasCancelListener() {
+      return this.$listeners && this.$listeners.cancelAddField;
+    },
+    fieldIsRequired: function () {
+      return this.field.required;
+    },
+    defaultValue: function () {
+      return this.field.defaultValue;
+    },
   },
   watch: {
     selected(selectedStatus) {
-      if(selectedStatus)
-        this.focusLabelInput();
+      if (selectedStatus) this.focusInput("fieldLabel");
     },
-    field: function(newValue) {
-      this.$emit('input', newValue);
-    }
+    field: function (newValue) {
+      this.$emit("input", newValue);
+    },
+    fieldIsRequired: function (newValue) {
+      if (!newValue) this.field.defaultValue = "null";
+    },
+    defaultValue: function (newValue) {
+      if (newValue == "other") this.focusInput("fieldDefaultValue");
+      else this.field.default = undefined;
+    },
   },
   methods: {
     setFieldType(type) {
-      if(type === 'reference'){
+      if (type === "reference") {
         type = {
-          label: 'Reference',
-          value: 'reference',
-          options: {}
-        }
-      }
-      else if(type === 'multi-reference'){
+          label: "Reference",
+          value: "reference",
+          options: {},
+        };
+      } else if (type === "multi-reference") {
         type = {
-          label: 'Multi Reference',
-          value: 'multi-reference',
-          options: {}
-        }
-      }
-      else if(type === 'status'){
+          label: "Multi Reference",
+          value: "multi-reference",
+          options: {},
+        };
+      } else if (type === "status") {
         type = {
-          label: 'Status',
-          value: 'status',
-          placeholder: 'E.g. status',
-          options: {}
-        }
+          label: "Status",
+          value: "status",
+          placeholder: "E.g. status",
+          options: {},
+        };
       }
       const clonedType = JSON.parse(JSON.stringify(type));
       this.field = {
         label: "",
         type: clonedType,
-        required: true
+        required: true,
+        defaultValue: "null",
       };
-      this.focusLabelInput();
+      this.focusInput("fieldLabel");
     },
-    focusLabelInput() {
+    focusInput(id) {
       this.$nextTick(() => {
-        this.$el.querySelector("#fieldLabel").focus();
-      })
+        document.querySelector("#" + id).focus();
+      });
     },
   },
   components: {
@@ -338,11 +442,13 @@ export default {
     CFormLabel,
     CFormHelperText,
     CInput,
+    CSelect,
     CCheckbox,
     CSwitch,
     PierModelReferenceFieldOption,
     PierModelStatusFieldOption,
-    PierModelFieldOption
-  }
+    PierModelFieldOption,
+    PierModelFieldDefaultValue,
+  },
 };
 </script>

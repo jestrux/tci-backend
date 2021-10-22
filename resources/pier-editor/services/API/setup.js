@@ -30,9 +30,14 @@ export const post = async (url, data, token = 'null') => {
 };
 
 export const request = async (type, endpoint, token, data) => {
+  let url = BASE_URL + endpoint;
+
+  if(window.pierPrefix && window.pierPrefix.length)
+    url = BASE_URL + `/${window.pierPrefix}` + endpoint;
+    
   const response = await axios({
     method: type,
-    url: BASE_URL + endpoint,
+    url,
     headers: {
       "Content-Type": "application/json",
       'Authorization': token

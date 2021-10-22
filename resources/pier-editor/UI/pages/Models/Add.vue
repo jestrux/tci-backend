@@ -198,6 +198,9 @@ export default {
             type: field.type.value,
           };
 
+          delete fieldDetails.defaultValue;
+          // if(fieldDetails.default == undefined) delete fieldDetails.default;
+
           const fieldOptions = {...field.type.options};
           let fieldMeta = {};
           for (let [key, option] of Object.entries(fieldOptions)) {
@@ -215,6 +218,7 @@ export default {
         })
       }
 
+      // console.log("Model: ", data);
       this.$store.dispatch('createModel', data);
     },
     addField() {

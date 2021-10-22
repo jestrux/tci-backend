@@ -12,6 +12,8 @@ use Faker\Factory as Faker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
+use function PHPUnit\Framework\isNull;
+
 class PierMigration extends Model{
     protected $fillable = [
         '_id', 'name', 'fields', 'display_field', 'settings'
@@ -81,17 +83,16 @@ class PierMigration extends Model{
         $field = $payload['field'];
 
         Schema::table($table_name, function (Blueprint $table) use($payload, $field){
-            $label = $field['label'];
-            $type = $field['type'];
-            $nullable = !$field['required'];
-            $meta = isset($field['meta']) ? $field['meta'] : null;
+            $meta = isset($field['meta']) ? $field['meta'] : [];
 
             if($payload['placement'] == 'start')
                 $meta["after"] = "_id";
             else if($payload['placement'] == 'after')
                 $meta["after"] = $payload['after'];
 
-            self::field_type_map($table, $label, $type, $nullable, $meta);
+            $field['meta'] = $meta;
+
+            self::field_type_map($table, $field);
         });
 
         if($field['type'] == 'multi-reference'){
@@ -371,6 +372,8 @@ class PierMigration extends Model{
         
         foreach ($regular_fields as $field) {
             $value = isset($data[$field->label]) ? $data[$field->label] : null;
+            if(is_null($value) && isset($field->default))
+                $value = $field->default;
 
             if($field->type === 'password')
                 $entry[$field->label] = Hash::make($value);
@@ -619,12 +622,7 @@ class PierMigration extends Model{
             $table->uuid("_id");
             
             foreach($fields as $field) {
-                $label = $field['label'];
-                $type = $field['type'];
-                $nullable = !$field['required'];
-                $meta = isset($field['meta']) ? $field['meta'] : null;
-
-                self::field_type_map($table, $label, $type, $nullable, $meta);
+                self::field_type_map($table, $field);
             };
             
             $table->timestamps();
@@ -730,78 +728,84 @@ class PierMigration extends Model{
         }
     }
     
-    static private function field_type_map(Blueprint $table, $field, $type, $nullable, $meta){
+    static private function field_type_map(Blueprint $table, $field){
+        $label = $field['label'];
+        $default = isset($field['default']) ? $field['default'] : null;
+        $type = $field['type'];
+        $required = $field['required'];
+        $meta = isset($field['meta']) ? $field['meta'] : null;
+
         $processed = null;
 
         switch ($type) {
             case 'name':
-                $processed = $table->string($field);
+                $processed = $table->string($label);
                 break;
 
             case 'email':
-                $processed = $table->string($field);
+                $processed = $table->string($label);
                 break;
 
             case 'password':
-                $processed = $table->string($field);
+                $processed = $table->string($label);
                 break;
                 
             case 'phone':
-                $processed = $table->string($field);
+                $processed = $table->string($label);
                 break;
 
             case 'image':
-                $processed = $table->text($field);
+                $processed = $table->text($label);
                 break;
                 
             case 'video':
-                $processed = $table->text($field);
+                $processed = $table->text($label);
                 break;
                 
             case 'file':
-                $processed = $table->text($field);
+                $processed = $table->text($label);
                 break;
                 
             case 'link':
-                $processed = $table->text($field);
+                $processed = $table->text($label);
                 break;
                 
             case 'location':
-                $processed = $table->text($field);
+                $processed = $table->text($label);
                 break;
                 
             case 'long text':
-                $processed = $table->longText($field);
+                $processed = $table->longText($label);
                 break;
                 
             case 'string':
-                $processed = $table->string($field);
+                $processed = $table->string($label);
                 break;
                 
             case 'number':
-                $processed = $table->bigInteger($field);
+                $processed = $table->bigInteger($label);
                 break;
                 
             case 'rating':
-                $processed = $table->float($field);
+                $processed = $table->float($label);
                 break;
                 
             case 'status':
-                $processed = $table->string($field)->nullable();
+                $processed = $table->string($label);
                 break;
 
             case 'boolean':
-                $processed = $table->boolean($field)->default(0);
+                $processed = $table->boolean($label);
                 break;
                 
             case 'date':
-                $processed = $table->timestamp($field);
+                $processed = $table->timestamp($label);
                 break;
                 
             case 'reference':{
                 $referenceTable = Str::snake($meta['model']);
-                $processed = $table->uuid($field);
-                $table->foreign($field)
+                $processed = $table->uuid($label);
+                $table->foreign($label)
                     ->references('_id')
                     ->on($referenceTable)
                     ->onDelete('cascade');
@@ -809,15 +813,21 @@ class PierMigration extends Model{
             }
             
             default:
-                $processed = $table->string($field);
+                $processed = $table->string($label);
                 break;
         }
 
-        if($nullable && $type !== 'reference'){
-            if($type === 'date')
-                $processed->useCurrent();
-            else
-                $processed->nullable();
+        if($type !== 'reference'){
+            if(!$required){
+                if(is_null($default))
+                    $processed->nullable();
+                else{
+                    if($type === 'date')
+                        $processed->useCurrent();
+                    else
+                        $processed->default($default);
+                }
+            }
         }
 
         if(isset($meta['after']))

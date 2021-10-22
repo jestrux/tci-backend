@@ -1,16 +1,22 @@
 <template>
-    <PierBooleanField v-if="option.type === 'toggle'" 
-        :option="option"
-        v-model="option.value" />
-    <PierRadioField v-else-if="option.type == 'radio'" 
-        :option="option"
-        v-model="option.value" />
-    <PierChoicesField v-else-if="option.type == 'choice'" 
-        :option="option"
-        v-model="option.value" />
-    <PierTextField v-else 
-        :option="option"
-        v-model="option.value" />
+    <div>
+        <PierBooleanField v-if="option.type === 'toggle'" 
+            :option="option"
+            v-model="option.value" />
+        <PierRadioField v-else-if="option.type == 'radio'" 
+            :option="option"
+            v-model="option.value" />
+        <PierChoicesField v-else-if="option.type == 'choice'" 
+            :option="option"
+            v-model="option.value" />
+        <PierTextField v-else 
+            :option="option"
+            v-model="option.value" />
+
+        <c-text v-if="option.hint && option.hint.length" color="#999" marginTop="-1rem" mb="6" fontSize="sm">
+            Hint: <span class="opacity-75">{{ option.hint }}</span>
+        </c-text>
+    </div>
 </template>
 
 <script>
@@ -19,6 +25,10 @@ import PierBooleanField from './PierBooleanField';
 import PierTextField from './PierTextField';
 import PierChoicesField from './PierChoicesField';
 import PierRadioField from './PierRadioField';
+
+import {
+  CText,
+} from '@chakra-ui/vue';
 
 export default {
   name: "PierModelFieldOption",
@@ -52,7 +62,8 @@ export default {
         PierTextField,
         PierBooleanField,
         PierChoicesField,
-        PierRadioField
+        PierRadioField,
+        CText
     }
 }
 </script>

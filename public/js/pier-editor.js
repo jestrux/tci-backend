@@ -6339,6 +6339,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             type: field.type.value
           });
 
+          delete fieldDetails.defaultValue; // if(fieldDetails.default == undefined) delete fieldDetails.default;
+
           var fieldOptions = _objectSpread({}, field.type.options);
 
           var fieldMeta = {};
@@ -6355,7 +6357,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           if (Object.keys(fieldOptions).length) fieldDetails.meta = fieldMeta;
           return fieldDetails;
         })
-      };
+      }; // console.log("Model: ", data);
+
       this.$store.dispatch('createModel', data);
     },
     addField: function addField() {
@@ -9368,7 +9371,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _PierModelReferenceFieldOption__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PierModelReferenceFieldOption */ "./resources/pier-editor/UI/pages/Models/components/PierModelReferenceFieldOption.vue");
 /* harmony import */ var _PierModelStatusFieldOption__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./PierModelStatusFieldOption */ "./resources/pier-editor/UI/pages/Models/components/PierModelStatusFieldOption.vue");
 /* harmony import */ var _PierModelFieldOption__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./PierModelFieldOption */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldOption/index.vue");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _PierModelFieldDefaultValue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./PierModelFieldDefaultValue */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -9609,6 +9613,83 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -9630,41 +9711,60 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       field: {
         label: "",
         type: {}
-      }
+      },
+      fieldTypesWithCustomDefaultValue: ["string", "long text", "number", "name", "email", "phone", 'color' // 'image',
+      // 'file',
+      // 'link',
+      // 'location',
+      // 'rating',
+      // 'boolean',
+      ]
     };
   },
-  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_6__["mapState"])(['models'])), {}, {
+  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_7__["mapState"])(["models"])), {}, {
     hasCancelListener: function hasCancelListener() {
       return this.$listeners && this.$listeners.cancelAddField;
+    },
+    fieldIsRequired: function fieldIsRequired() {
+      return this.field.required;
+    },
+    defaultValue: function defaultValue() {
+      return this.field.defaultValue;
     }
   }),
   watch: {
     selected: function selected(selectedStatus) {
-      if (selectedStatus) this.focusLabelInput();
+      if (selectedStatus) this.focusInput("fieldLabel");
     },
     field: function field(newValue) {
-      this.$emit('input', newValue);
+      this.$emit("input", newValue);
+    },
+    fieldIsRequired: function fieldIsRequired(newValue) {
+      if (!newValue) this.field.defaultValue = "null";
+    },
+    defaultValue: function defaultValue(newValue) {
+      if (newValue == "other") this.focusInput("fieldDefaultValue");else this.field["default"] = undefined;
     }
   },
   methods: {
     setFieldType: function setFieldType(type) {
-      if (type === 'reference') {
+      if (type === "reference") {
         type = {
-          label: 'Reference',
-          value: 'reference',
+          label: "Reference",
+          value: "reference",
           options: {}
         };
-      } else if (type === 'multi-reference') {
+      } else if (type === "multi-reference") {
         type = {
-          label: 'Multi Reference',
-          value: 'multi-reference',
+          label: "Multi Reference",
+          value: "multi-reference",
           options: {}
         };
-      } else if (type === 'status') {
+      } else if (type === "status") {
         type = {
-          label: 'Status',
-          value: 'status',
-          placeholder: 'E.g. status',
+          label: "Status",
+          value: "status",
+          placeholder: "E.g. status",
           options: {}
         };
       }
@@ -9673,15 +9773,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.field = {
         label: "",
         type: clonedType,
-        required: true
+        required: true,
+        defaultValue: "null"
       };
-      this.focusLabelInput();
+      this.focusInput("fieldLabel");
     },
-    focusLabelInput: function focusLabelInput() {
-      var _this = this;
-
+    focusInput: function focusInput(id) {
       this.$nextTick(function () {
-        _this.$el.querySelector("#fieldLabel").focus();
+        document.querySelector("#" + id).focus();
       });
     }
   },
@@ -9697,11 +9796,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     CFormLabel: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CFormLabel"],
     CFormHelperText: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CFormHelperText"],
     CInput: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CInput"],
+    CSelect: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CSelect"],
     CCheckbox: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CCheckbox"],
     CSwitch: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CSwitch"],
     PierModelReferenceFieldOption: _PierModelReferenceFieldOption__WEBPACK_IMPORTED_MODULE_3__["default"],
     PierModelStatusFieldOption: _PierModelStatusFieldOption__WEBPACK_IMPORTED_MODULE_4__["default"],
-    PierModelFieldOption: _PierModelFieldOption__WEBPACK_IMPORTED_MODULE_5__["default"]
+    PierModelFieldOption: _PierModelFieldOption__WEBPACK_IMPORTED_MODULE_5__["default"],
+    PierModelFieldDefaultValue: _PierModelFieldDefaultValue__WEBPACK_IMPORTED_MODULE_6__["default"]
   }
 });
 
@@ -9754,6 +9855,358 @@ __webpack_require__.r(__webpack_exports__);
     CBox: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CBox"],
     CText: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CText"],
     MDIcon: _MDIcon__WEBPACK_IMPORTED_MODULE_1__["default"]
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @chakra-ui/vue */ "./node_modules/@chakra-ui/vue/dist/esm/index.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "PierBooleanField",
+  props: {
+    option: Object,
+    value: Object | String | Boolean
+  },
+  mounted: function mounted() {
+    if (this.option) {
+      var value = this.option.value;
+      if (value !== undefined) this.val = value;
+    }
+  },
+  data: function data() {
+    return {
+      val: ""
+    };
+  },
+  watch: {
+    val: function val(newValue) {
+      this.$emit('input', newValue);
+    }
+  },
+  components: {
+    CFormControl: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CFormControl"],
+    CFormLabel: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CFormLabel"],
+    CSwitch: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CSwitch"]
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @chakra-ui/vue */ "./node_modules/@chakra-ui/vue/dist/esm/index.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "PierChoicesField",
+  props: {
+    option: Object,
+    value: Object | String | Boolean
+  },
+  mounted: function mounted() {
+    if (this.option) {
+      var value = this.option.value;
+      if (value !== undefined) this.val = value;
+    }
+  },
+  data: function data() {
+    return {
+      val: ""
+    };
+  },
+  watch: {
+    val: function val(newValue) {
+      this.$emit('input', newValue);
+    }
+  },
+  components: {
+    CFormControl: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CFormControl"],
+    CFormLabel: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CFormLabel"],
+    CSelect: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CSelect"]
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @chakra-ui/vue */ "./node_modules/@chakra-ui/vue/dist/esm/index.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+var CustomRadio = {
+  name: 'CustomRadio',
+  props: {
+    isChecked: Boolean,
+    isDisabled: Boolean,
+    value: [String, Number],
+    mx: [String, Number]
+  },
+  template: "\n    <c-button\n        style=\"box-shadow: none\"\n        v-bind=\"$props\"\n        height=\"30px\"\n        mt=\"1\"\n        mb=\"1\"\n        mr=\"2\"\n        px=\"6\"\n        :variant-color=\"isChecked ? 'orange.300' : 'gray'\"\n        :backgroundColor=\"isChecked ? '#4b4b4b' : '#2c2c2c'\"\n        :color=\"isChecked ? '#bfbdbd' : '#999'\"\n        borderRadius=\"50px\"\n        role=\"radio\"\n        :aria-checked=\"isChecked\"\n        @click=\"$emit('clicked')\"\n        >\n        <slot />\n    </c-button>\n    ",
+  components: {
+    CButton: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CButton"]
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "PierRadioField",
+  props: {
+    option: Object,
+    value: Object | String | Boolean
+  },
+  mounted: function mounted() {
+    if (this.option) {
+      var value = this.option.value;
+      if (value !== undefined) this.val = value;
+    }
+  },
+  data: function data() {
+    return {
+      val: ""
+    };
+  },
+  watch: {
+    val: function val(newValue) {
+      this.$emit('input', newValue);
+    }
+  },
+  components: {
+    CFormControl: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CFormControl"],
+    CFormLabel: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CFormLabel"],
+    CStack: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CStack"],
+    CustomRadio: CustomRadio
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @chakra-ui/vue */ "./node_modules/@chakra-ui/vue/dist/esm/index.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "PierTextField",
+  props: {
+    option: Object,
+    value: Object | String | Boolean
+  },
+  mounted: function mounted() {
+    if (this.option) {
+      var value = this.option.value;
+      if (value !== undefined) this.val = value;
+    }
+  },
+  data: function data() {
+    return {
+      val: ""
+    };
+  },
+  watch: {
+    val: function val(newValue) {
+      this.$emit('input', newValue);
+    }
+  },
+  components: {
+    CFormControl: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CFormControl"],
+    CFormLabel: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CFormLabel"],
+    CInput: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_0__["CInput"]
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PierBooleanField__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PierBooleanField */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue");
+/* harmony import */ var _PierTextField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PierTextField */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue");
+/* harmony import */ var _PierChoicesField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PierChoicesField */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue");
+/* harmony import */ var _PierRadioField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PierRadioField */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue");
+/* harmony import */ var _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @chakra-ui/vue */ "./node_modules/@chakra-ui/vue/dist/esm/index.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "PierModelFieldDefaultValue",
+  props: {
+    value: Object | String | Boolean
+  },
+  mounted: function mounted() {
+    var field = _objectSpread({}, this.value);
+
+    if (field) {
+      var value = field.value,
+          defaultValue = field.defaultValue,
+          type = field.type;
+      if (value === undefined && defaultValue !== undefined) field.value = defaultValue;
+      if (type && type.value) field.type = type.value;
+      if (field["default"]) this.defaultValue = field["default"];
+    }
+
+    this.field = field;
+  },
+  data: function data() {
+    return {
+      field: {},
+      defaultValue: null
+    };
+  },
+  watch: {
+    defaultValue: {
+      deep: true,
+      handler: function handler(newValue) {
+        this.$emit("input", newValue);
+      }
+    }
+  },
+  components: {
+    PierTextField: _PierTextField__WEBPACK_IMPORTED_MODULE_1__["default"],
+    PierBooleanField: _PierBooleanField__WEBPACK_IMPORTED_MODULE_0__["default"],
+    PierChoicesField: _PierChoicesField__WEBPACK_IMPORTED_MODULE_2__["default"],
+    PierRadioField: _PierRadioField__WEBPACK_IMPORTED_MODULE_3__["default"],
+    CText: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_4__["CText"],
+    CFormControl: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_4__["CFormControl"],
+    CFormLabel: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_4__["CFormLabel"],
+    CInput: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_4__["CInput"],
+    CSelect: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_4__["CSelect"]
   }
 });
 
@@ -9972,6 +10425,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "PierTextField",
@@ -10017,6 +10471,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _PierTextField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PierTextField */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldOption/PierTextField.vue");
 /* harmony import */ var _PierChoicesField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PierChoicesField */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldOption/PierChoicesField.vue");
 /* harmony import */ var _PierRadioField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PierRadioField */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldOption/PierRadioField.vue");
+/* harmony import */ var _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @chakra-ui/vue */ "./node_modules/@chakra-ui/vue/dist/esm/index.js");
 //
 //
 //
@@ -10032,6 +10487,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -10069,7 +10531,8 @@ __webpack_require__.r(__webpack_exports__);
     PierTextField: _PierTextField__WEBPACK_IMPORTED_MODULE_1__["default"],
     PierBooleanField: _PierBooleanField__WEBPACK_IMPORTED_MODULE_0__["default"],
     PierChoicesField: _PierChoicesField__WEBPACK_IMPORTED_MODULE_2__["default"],
-    PierRadioField: _PierRadioField__WEBPACK_IMPORTED_MODULE_3__["default"]
+    PierRadioField: _PierRadioField__WEBPACK_IMPORTED_MODULE_3__["default"],
+    CText: _chakra_ui_vue__WEBPACK_IMPORTED_MODULE_4__["CText"]
   }
 });
 
@@ -11092,7 +11555,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 
 // module
-exports.push([module.i, "\n.fieldItem:not(:hover) .fieldActionButtons{\n  display: none;\n}\n#fieldTypeOptions{\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;\n  grid-gap: 0.8rem;\n  /* margin-top: -2rem; */\n  user-select: none;\n}\n.action-label{\n  display: inline-flex;\n  flex-direction: column;\n  align-items: center;\n  padding: 0.8rem;\n  border: 1px solid #555;\n  border-radius: 5px;\n  width: auto;\n  cursor: pointer;\n  color: #777;\n  font-size: 0.8rem;\n  text-transform: capitalize;\n}\n.action-label.active{\n  border-color: #8c6d52;\n  background: #28231f;\n  color: #ffba7f;\n}\n.action-label svg{\n  display: inline-block;\n  margin-bottom: 0.2rem;\n}\n.action-label span:last-child{\n  display: block;\n  width: 100%;\n}\n.action-label input{\n  display: none !important\n}\n", ""]);
+exports.push([module.i, "\n.fieldItem:not(:hover) .fieldActionButtons {\n  display: none;\n}\n#fieldTypeOptions {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;\n  grid-gap: 0.8rem;\n  /* margin-top: -2rem; */\n  user-select: none;\n}\n.action-label {\n  display: inline-flex;\n  flex-direction: column;\n  align-items: center;\n  padding: 0.8rem;\n  border: 1px solid #555;\n  border-radius: 5px;\n  width: auto;\n  cursor: pointer;\n  color: #777;\n  font-size: 0.8rem;\n  text-transform: capitalize;\n}\n.action-label.active {\n  border-color: #8c6d52;\n  background: #28231f;\n  color: #ffba7f;\n}\n.action-label svg {\n  display: inline-block;\n  margin-bottom: 0.2rem;\n}\n.action-label span:last-child {\n  display: block;\n  width: 100%;\n}\n.action-label input {\n  display: none !important;\n}\n", ""]);
 
 // exports
 
@@ -24454,9 +24917,9 @@ var render = function() {
                               ])
                             : _c("span", [
                                 _vm._v(
-                                  "\n                " +
+                                  "\n              " +
                                     _vm._s(_vm.field.label || "New Field") +
-                                    "\n              "
+                                    "\n            "
                                 )
                               ])
                         ]
@@ -24579,11 +25042,7 @@ var render = function() {
                                       }
                                     }
                                   },
-                                  [
-                                    _vm._v(
-                                      "\n                Edit\n            "
-                                    )
-                                  ]
+                                  [_vm._v("\n              Edit\n            ")]
                                 ),
                                 _vm._v(" "),
                                 _c(
@@ -24602,7 +25061,7 @@ var render = function() {
                                   },
                                   [
                                     _vm._v(
-                                      "\n                Remove\n            "
+                                      "\n              Remove\n            "
                                     )
                                   ]
                                 )
@@ -24740,7 +25199,6 @@ var render = function() {
                                   _vm._v(" "),
                                   _c(
                                     "c-form-control",
-                                    { attrs: { mb: "6" } },
                                     [
                                       _c("c-switch", {
                                         attrs: {
@@ -24763,13 +25221,153 @@ var render = function() {
                                         { attrs: { "html-for": "required" } },
                                         [
                                           _vm._v(
-                                            "\n                    This field is required\n                  "
+                                            "\n                  This field is required\n                "
                                           )
                                         ]
                                       )
                                     ],
                                     1
-                                  )
+                                  ),
+                                  _vm._v(" "),
+                                  !_vm.field.required
+                                    ? _c(
+                                        "c-stack",
+                                        {
+                                          attrs: { isInline: "", spacing: "3" }
+                                        },
+                                        [
+                                          _c(
+                                            "c-form-control",
+                                            {
+                                              attrs: {
+                                                flexShrink: "0",
+                                                flex: "1",
+                                                mt: "3",
+                                                mb: "3"
+                                              }
+                                            },
+                                            [
+                                              _c(
+                                                "c-form-label",
+                                                {
+                                                  attrs: {
+                                                    color: "#777",
+                                                    fontSize: "lg"
+                                                  }
+                                                },
+                                                [
+                                                  _vm._v(
+                                                    "\n                    Field Default Value\n                  "
+                                                  )
+                                                ]
+                                              ),
+                                              _vm._v(" "),
+                                              _c(
+                                                "c-select",
+                                                {
+                                                  attrs: {
+                                                    placeholder: "Choose one"
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.field.defaultValue,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.field,
+                                                        "defaultValue",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "field.defaultValue"
+                                                  }
+                                                },
+                                                [
+                                                  _c(
+                                                    "option",
+                                                    {
+                                                      attrs: { value: "null" }
+                                                    },
+                                                    [_vm._v("Null")]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _vm.field.type &&
+                                                  _vm.field.type.value == "date"
+                                                    ? _c(
+                                                        "option",
+                                                        {
+                                                          attrs: {
+                                                            value:
+                                                              "currentTimestamp"
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            "\n                      Current Timestamp\n                    "
+                                                          )
+                                                        ]
+                                                      )
+                                                    : _vm.field.type &&
+                                                      _vm.fieldTypesWithCustomDefaultValue.includes(
+                                                        _vm.field.type.value
+                                                      )
+                                                    ? _c(
+                                                        "option",
+                                                        {
+                                                          attrs: {
+                                                            value: "other"
+                                                          }
+                                                        },
+                                                        [_vm._v("Other")]
+                                                      )
+                                                    : _vm._e()
+                                                ]
+                                              )
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "c-box",
+                                            {
+                                              attrs: {
+                                                flexShrink: "0",
+                                                flex: "1",
+                                                mt: "3",
+                                                mb: "3"
+                                              }
+                                            },
+                                            [
+                                              _c("PierModelFieldDefaultValue", {
+                                                directives: [
+                                                  {
+                                                    name: "show",
+                                                    rawName: "v-show",
+                                                    value:
+                                                      _vm.field.defaultValue ==
+                                                      "other",
+                                                    expression:
+                                                      "field.defaultValue == 'other'"
+                                                  }
+                                                ],
+                                                ref: "fieldDefaultValue",
+                                                attrs: {
+                                                  size: "md",
+                                                  value: _vm.field
+                                                },
+                                                on: {
+                                                  input: function($event) {
+                                                    _vm.field.default = $event
+                                                  }
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    : _vm._e()
                                 ],
                                 2
                               )
@@ -25047,6 +25645,304 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=template&id=b2071f8e&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=template&id=b2071f8e& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "c-form-control",
+    { attrs: { mb: "6" } },
+    [
+      _c("c-switch", {
+        attrs: { id: _vm.option.label, mr: "2", color: "orange", size: "md" },
+        model: {
+          value: _vm.val,
+          callback: function($$v) {
+            _vm.val = $$v
+          },
+          expression: "val"
+        }
+      }),
+      _vm._v(" "),
+      _c("c-form-label", { attrs: { "html-for": _vm.option.label } }, [
+        _vm._v("\n        " + _vm._s(_vm.option.label) + "\n    ")
+      ])
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=template&id=51a408af&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=template&id=51a408af& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "c-form-control",
+    { attrs: { mb: "6" } },
+    [
+      _c(
+        "c-form-label",
+        {
+          attrs: {
+            "html-for": _vm.option.label,
+            color: "#777",
+            fontSize: "lg",
+            for: "fieldLabel"
+          }
+        },
+        [_vm._v("\n        " + _vm._s(_vm.option.label) + "\n    ")]
+      ),
+      _vm._v(" "),
+      _c(
+        "c-select",
+        {
+          attrs: { placeholder: "Choose one" },
+          model: {
+            value: _vm.val,
+            callback: function($$v) {
+              _vm.val = $$v
+            },
+            expression: "val"
+          }
+        },
+        _vm._l(_vm.option.choices, function(choice, index) {
+          return _c("option", { key: index, domProps: { value: choice } }, [
+            _vm._v("\n            " + _vm._s(choice) + "\n        ")
+          ])
+        }),
+        0
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=template&id=7b435586&":
+/*!*********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=template&id=7b435586& ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "c-form-control",
+    { attrs: { mb: "6" } },
+    [
+      _c(
+        "c-form-label",
+        {
+          attrs: {
+            "html-for": _vm.option.label,
+            color: "#777",
+            fontSize: "lg",
+            for: "fieldLabel"
+          }
+        },
+        [_vm._v("\n        " + _vm._s(_vm.option.label) + "\n    ")]
+      ),
+      _vm._v(" "),
+      _c(
+        "c-stack",
+        {
+          attrs: { "is-inline": "" },
+          model: {
+            value: _vm.val,
+            callback: function($$v) {
+              _vm.val = $$v
+            },
+            expression: "val"
+          }
+        },
+        _vm._l(_vm.option.choices, function(choice, index) {
+          return _c(
+            "custom-radio",
+            {
+              key: index,
+              attrs: {
+                "is-checked":
+                  (choice.value && _vm.val === choice.value) ||
+                  _vm.val === choice
+              },
+              on: {
+                clicked: function($event) {
+                  _vm.val = choice.value || choice
+                }
+              }
+            },
+            [
+              _vm._v(
+                "\n            " + _vm._s(choice.label || choice) + "\n        "
+              )
+            ]
+          )
+        }),
+        1
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=template&id=59d39956&":
+/*!********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=template&id=59d39956& ***!
+  \********************************************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "c-form-control",
+    { attrs: { mb: "6" } },
+    [
+      _c(
+        "c-form-label",
+        {
+          attrs: {
+            "html-for": _vm.option.label,
+            color: "#777",
+            fontSize: "lg",
+            for: "fieldLabel"
+          }
+        },
+        [_vm._v("\n        " + _vm._s(_vm.option.label) + "\n    ")]
+      ),
+      _vm._v(" "),
+      _c("c-input", {
+        attrs: {
+          id: _vm.option.label,
+          placeholder: _vm.option.placeholder,
+          type: "text",
+          size: "md"
+        },
+        model: {
+          value: _vm.val,
+          callback: function($$v) {
+            _vm.val = $$v
+          },
+          expression: "val"
+        }
+      })
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=template&id=51ae19c1&":
+/*!************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=template&id=51ae19c1& ***!
+  \************************************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "c-form-control",
+        [
+          _c("c-form-label", { attrs: { color: "#777", fontSize: "lg" } }, [
+            _vm._v("\n      Set Default Value\n    ")
+          ]),
+          _vm._v(" "),
+          _c("c-input", {
+            attrs: {
+              id: "fieldDefaultValue",
+              placeholder: "Enter default value here",
+              size: "md",
+              type: _vm.field.type
+            },
+            model: {
+              value: _vm.defaultValue,
+              callback: function($$v) {
+                _vm.defaultValue = $$v
+              },
+              expression: "defaultValue"
+            }
+          })
+        ],
+        1
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldOption/PierBooleanField.vue?vue&type=template&id=55c05014&":
 /*!*****************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/pier-editor/UI/pages/Models/components/PierModelFieldOption/PierBooleanField.vue?vue&type=template&id=55c05014& ***!
@@ -25266,7 +26162,12 @@ var render = function() {
       ),
       _vm._v(" "),
       _c("c-input", {
-        attrs: { id: _vm.option.label, type: "text", size: "md" },
+        attrs: {
+          id: _vm.option.label,
+          placeholder: _vm.option.placeholder,
+          type: "text",
+          size: "md"
+        },
         model: {
           value: _vm.val,
           callback: function($$v) {
@@ -25301,49 +26202,75 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.option.type === "toggle"
-    ? _c("PierBooleanField", {
-        attrs: { option: _vm.option },
-        model: {
-          value: _vm.option.value,
-          callback: function($$v) {
-            _vm.$set(_vm.option, "value", $$v)
-          },
-          expression: "option.value"
-        }
-      })
-    : _vm.option.type == "radio"
-    ? _c("PierRadioField", {
-        attrs: { option: _vm.option },
-        model: {
-          value: _vm.option.value,
-          callback: function($$v) {
-            _vm.$set(_vm.option, "value", $$v)
-          },
-          expression: "option.value"
-        }
-      })
-    : _vm.option.type == "choice"
-    ? _c("PierChoicesField", {
-        attrs: { option: _vm.option },
-        model: {
-          value: _vm.option.value,
-          callback: function($$v) {
-            _vm.$set(_vm.option, "value", $$v)
-          },
-          expression: "option.value"
-        }
-      })
-    : _c("PierTextField", {
-        attrs: { option: _vm.option },
-        model: {
-          value: _vm.option.value,
-          callback: function($$v) {
-            _vm.$set(_vm.option, "value", $$v)
-          },
-          expression: "option.value"
-        }
-      })
+  return _c(
+    "div",
+    [
+      _vm.option.type === "toggle"
+        ? _c("PierBooleanField", {
+            attrs: { option: _vm.option },
+            model: {
+              value: _vm.option.value,
+              callback: function($$v) {
+                _vm.$set(_vm.option, "value", $$v)
+              },
+              expression: "option.value"
+            }
+          })
+        : _vm.option.type == "radio"
+        ? _c("PierRadioField", {
+            attrs: { option: _vm.option },
+            model: {
+              value: _vm.option.value,
+              callback: function($$v) {
+                _vm.$set(_vm.option, "value", $$v)
+              },
+              expression: "option.value"
+            }
+          })
+        : _vm.option.type == "choice"
+        ? _c("PierChoicesField", {
+            attrs: { option: _vm.option },
+            model: {
+              value: _vm.option.value,
+              callback: function($$v) {
+                _vm.$set(_vm.option, "value", $$v)
+              },
+              expression: "option.value"
+            }
+          })
+        : _c("PierTextField", {
+            attrs: { option: _vm.option },
+            model: {
+              value: _vm.option.value,
+              callback: function($$v) {
+                _vm.$set(_vm.option, "value", $$v)
+              },
+              expression: "option.value"
+            }
+          }),
+      _vm._v(" "),
+      _vm.option.hint && _vm.option.hint.length
+        ? _c(
+            "c-text",
+            {
+              attrs: {
+                color: "#999",
+                marginTop: "-1rem",
+                mb: "6",
+                fontSize: "sm"
+              }
+            },
+            [
+              _vm._v("\n        Hint: "),
+              _c("span", { staticClass: "opacity-75" }, [
+                _vm._v(_vm._s(_vm.option.hint))
+              ])
+            ]
+          )
+        : _vm._e()
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -43989,7 +44916,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ([{
   label: 'Short Text',
   value: 'string',
-  placeholder: 'E.g. genre'
+  placeholder: 'E.g. title'
 }, {
   label: 'Long Text',
   value: 'long text',
@@ -44004,7 +44931,7 @@ __webpack_require__.r(__webpack_exports__);
 }, {
   label: 'Number',
   value: 'number',
-  placeholder: 'E.g. rating'
+  placeholder: 'E.g. points'
 }, {
   label: 'Name',
   value: 'name',
@@ -44064,7 +44991,15 @@ __webpack_require__.r(__webpack_exports__);
 }, {
   label: 'Location',
   value: 'location',
-  placeholder: 'E.g. location'
+  placeholder: 'E.g. location',
+  options: {
+    countries: {
+      label: "Supported Countries",
+      placeholder: 'E.g. us,uk,tz',
+      hint: "Leave empty to support all countries",
+      defaultValue: ""
+    }
+  }
 }, {
   label: 'Rating',
   value: 'rating',
@@ -46461,6 +47396,351 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue":
+/*!**********************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue ***!
+  \**********************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PierBooleanField_vue_vue_type_template_id_b2071f8e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PierBooleanField.vue?vue&type=template&id=b2071f8e& */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=template&id=b2071f8e&");
+/* harmony import */ var _PierBooleanField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PierBooleanField.vue?vue&type=script&lang=js& */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _PierBooleanField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _PierBooleanField_vue_vue_type_template_id_b2071f8e___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _PierBooleanField_vue_vue_type_template_id_b2071f8e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PierBooleanField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PierBooleanField.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PierBooleanField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=template&id=b2071f8e&":
+/*!*****************************************************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=template&id=b2071f8e& ***!
+  \*****************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierBooleanField_vue_vue_type_template_id_b2071f8e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PierBooleanField.vue?vue&type=template&id=b2071f8e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierBooleanField.vue?vue&type=template&id=b2071f8e&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierBooleanField_vue_vue_type_template_id_b2071f8e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierBooleanField_vue_vue_type_template_id_b2071f8e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue":
+/*!**********************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue ***!
+  \**********************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PierChoicesField_vue_vue_type_template_id_51a408af___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PierChoicesField.vue?vue&type=template&id=51a408af& */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=template&id=51a408af&");
+/* harmony import */ var _PierChoicesField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PierChoicesField.vue?vue&type=script&lang=js& */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _PierChoicesField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _PierChoicesField_vue_vue_type_template_id_51a408af___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _PierChoicesField_vue_vue_type_template_id_51a408af___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PierChoicesField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PierChoicesField.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PierChoicesField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=template&id=51a408af&":
+/*!*****************************************************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=template&id=51a408af& ***!
+  \*****************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierChoicesField_vue_vue_type_template_id_51a408af___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PierChoicesField.vue?vue&type=template&id=51a408af& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierChoicesField.vue?vue&type=template&id=51a408af&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierChoicesField_vue_vue_type_template_id_51a408af___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierChoicesField_vue_vue_type_template_id_51a408af___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue":
+/*!********************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue ***!
+  \********************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PierRadioField_vue_vue_type_template_id_7b435586___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PierRadioField.vue?vue&type=template&id=7b435586& */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=template&id=7b435586&");
+/* harmony import */ var _PierRadioField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PierRadioField.vue?vue&type=script&lang=js& */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _PierRadioField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _PierRadioField_vue_vue_type_template_id_7b435586___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _PierRadioField_vue_vue_type_template_id_7b435586___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PierRadioField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PierRadioField.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PierRadioField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=template&id=7b435586&":
+/*!***************************************************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=template&id=7b435586& ***!
+  \***************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierRadioField_vue_vue_type_template_id_7b435586___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PierRadioField.vue?vue&type=template&id=7b435586& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierRadioField.vue?vue&type=template&id=7b435586&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierRadioField_vue_vue_type_template_id_7b435586___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierRadioField_vue_vue_type_template_id_7b435586___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue":
+/*!*******************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue ***!
+  \*******************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PierTextField_vue_vue_type_template_id_59d39956___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PierTextField.vue?vue&type=template&id=59d39956& */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=template&id=59d39956&");
+/* harmony import */ var _PierTextField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PierTextField.vue?vue&type=script&lang=js& */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _PierTextField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _PierTextField_vue_vue_type_template_id_59d39956___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _PierTextField_vue_vue_type_template_id_59d39956___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PierTextField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PierTextField.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PierTextField_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=template&id=59d39956&":
+/*!**************************************************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=template&id=59d39956& ***!
+  \**************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierTextField_vue_vue_type_template_id_59d39956___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PierTextField.vue?vue&type=template&id=59d39956& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/PierTextField.vue?vue&type=template&id=59d39956&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierTextField_vue_vue_type_template_id_59d39956___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PierTextField_vue_vue_type_template_id_59d39956___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue":
+/*!***********************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue ***!
+  \***********************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _index_vue_vue_type_template_id_51ae19c1___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.vue?vue&type=template&id=51ae19c1& */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=template&id=51ae19c1&");
+/* harmony import */ var _index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index.vue?vue&type=script&lang=js& */ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _index_vue_vue_type_template_id_51ae19c1___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _index_vue_vue_type_template_id_51ae19c1___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./index.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=template&id=51ae19c1&":
+/*!******************************************************************************************************************************!*\
+  !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=template&id=51ae19c1& ***!
+  \******************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_51ae19c1___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./index.vue?vue&type=template&id=51ae19c1& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/pier-editor/UI/pages/Models/components/PierModelFieldDefaultValue/index.vue?vue&type=template&id=51ae19c1&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_51ae19c1___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_51ae19c1___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/pier-editor/UI/pages/Models/components/PierModelFieldOption/PierBooleanField.vue":
 /*!****************************************************************************************************!*\
   !*** ./resources/pier-editor/UI/pages/Models/components/PierModelFieldOption/PierBooleanField.vue ***!
@@ -47586,15 +48866,17 @@ var post = /*#__PURE__*/function () {
 }();
 var request = /*#__PURE__*/function () {
   var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(type, endpoint, token, data) {
-    var response;
+    var url, response;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
           case 0:
-            _context5.next = 2;
+            url = BASE_URL + endpoint;
+            if (window.pierPrefix && window.pierPrefix.length) url = BASE_URL + "/".concat(window.pierPrefix) + endpoint;
+            _context5.next = 4;
             return axios({
               method: type,
-              url: BASE_URL + endpoint,
+              url: url,
               headers: {
                 "Content-Type": "application/json",
                 'Authorization': token
@@ -47602,11 +48884,11 @@ var request = /*#__PURE__*/function () {
               data: data
             });
 
-          case 2:
+          case 4:
             response = _context5.sent;
             return _context5.abrupt("return", response.data);
 
-          case 4:
+          case 6:
           case "end":
             return _context5.stop();
         }

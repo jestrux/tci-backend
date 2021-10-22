@@ -6,6 +6,7 @@
         
         <c-input
             :id="option.label"
+            :placeholder="option.placeholder"
             type="text"
             size="md"
             v-model="val"

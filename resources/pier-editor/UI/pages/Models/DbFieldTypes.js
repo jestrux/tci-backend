@@ -2,7 +2,7 @@ export default [
   {
     label: 'Short Text',
     value: 'string',
-    placeholder: 'E.g. genre'
+    placeholder: 'E.g. title'
   },
   {
     label: 'Long Text',
@@ -19,7 +19,7 @@ export default [
   {
     label: 'Number',
     value: 'number',
-    placeholder: 'E.g. rating'
+    placeholder: 'E.g. points'
   },
   {
     label: 'Name',
@@ -89,7 +89,15 @@ export default [
   {
     label: 'Location',
     value: 'location',
-    placeholder: 'E.g. location'
+    placeholder: 'E.g. location',
+    options: {
+      countries: {
+        label: "Supported Countries",
+        placeholder: 'E.g. us,uk,tz',
+        hint: "Leave empty to support all countries",
+        defaultValue: ""
+      }
+    }
   },
   {
     label: 'Rating',
