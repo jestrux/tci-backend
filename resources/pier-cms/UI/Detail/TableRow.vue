@@ -2,6 +2,7 @@
   .pier-th{
     text-transform: capitalize;
     text-align: left;
+    padding: 0;
     padding-top: 1rem;
   }
 </style>

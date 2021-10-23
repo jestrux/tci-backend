@@ -14,7 +14,7 @@ class CMSController extends Controller
 {
     public function index(){
         $models = PierMigration::all();
-        return view('cms.index', compact('models'));
+        return view('pier.cms.index', compact('models'));
     }
     
     public function link_preview(){

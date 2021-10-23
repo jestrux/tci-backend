@@ -135,6 +135,7 @@ export default {
                         </a>
                     );
                 case 'location':
+                    if(!value) return null;
                     return (
                         <img src={getMapLocation(value, 1080, 720)} />
                     );
@@ -160,6 +161,34 @@ export default {
         if(type === 'reference'){
             type = meta.type;
             value = value[meta.field]
+        }
+        
+        if(type === 'multi-reference'){
+            if(!value || !value.length){
+                return (
+                    <td class={className}>
+                        No { label }
+                    </td>
+                );
+            }
+            
+            else if(meta.type === 'image' && meta.face){
+                return (
+                    <td class={className}>
+                        { value.slice(0,3).map(item => renderColumn(item[meta.field], meta.type, meta)) }
+                        
+                        { value.length > 3 && (
+                            <span class="pl-2">+{value.length - 3}</span>
+                        ) }
+                    </td>
+                );
+            }
+
+            return (
+                <td class={className}>
+                    {value.length} { label }
+                </td>
+            );
         }
 
         return (

@@ -167,6 +167,7 @@ export default {
                 }
 
                 case 'location':
+                    if(!value) return null;
                     return (
                         <a class="text-blue-500" target="_blank" href={getMapLocation(value, 1080, 720)}>
                             View Location
@@ -218,8 +219,8 @@ export default {
                     <td class={className}>
                         { value.slice(0,3).map(item => renderColumn(item[meta.field], meta.type, meta)) }
                         
-                        { value.length > 2 && (
-                            <span class="pl-2">+{value.length - 2}</span>
+                        { value.length > 3 && (
+                            <span class="pl-2">+{value.length - 3}</span>
                         ) }
                     </td>
                 );
