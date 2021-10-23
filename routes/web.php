@@ -1,5 +1,6 @@
 <?php
 
+use App\PierMigration;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Http\Request;
@@ -15,11 +16,27 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::view('/pier', 'pier');
+Route::post('/pier-data-refetch', function (Request $request) {
+    $model = $request->input("model");
+    $view = $request->input("view");
+    $filters = $request->input("filters");
+    $data = PierMigration::browse($model, $filters);
+    $data = ["data" => $data];
 
-Route::get('/', function () {
-    return view('home');
+    $filename = hash('sha1', $view);
+
+    $file_location = storage_path('framework/views/');
+    $filepath = storage_path('framework/views/'.$filename.'.blade.php');
+
+    if (!file_exists($filepath))
+        file_put_contents($filepath, $view);
+        
+    view()->addLocation($file_location);
+
+    return view($filename, $data);
 });
+
+Route::view('/', 'home');
 
 Route::post('test/staging', function (Request $request) {
     return response()->json([
@@ -30,9 +47,10 @@ Route::post('test/staging', function (Request $request) {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::redirect('/pier', '/pier/editor');
+Route::view('/pier/editor', 'pier.editor');
 
-Route::get('/cms', 'CMSController@index')->name('cms');
+Route::get('/pier/cms', 'CMSController@index')->name('cms');
 Route::post('/upload_file', 'CMSController@upload_file')->name('upload_file');
 Route::get('/link_preview', 'CMSController@link_preview');
 
