@@ -4,26 +4,38 @@
     }
 </style>
 <template>
-    <autocomplete 
-        :placeholder="`Type to search for ${label}`"
-        :search="search" 
-        :get-result-value="getResultValue"
-        :debounceTime="300"
-        @submit="handleSubmit"
-    />
+    <div>
+        <div v-if="val" class="flex items-center px-2 rounded bg-gray-200 bg-opacity-25 border border-gray-300" style="height: 40px">
+            <span class="ml-2 text-sm">{{displayValue}}</span>
+
+            <button type="button" class="ml-auto h-full flex items-center text-blue-900 text-xs uppercase px-1 border-none bg-transparent" 
+                @click="val = null">
+                Change
+            </button>
+        </div>
+
+        <autocomplete v-else
+            :placeholder="`Type to search for ${label}`"
+            :search="search" 
+            :get-result-value="getResultValue"
+            :debounceTime="300"
+            @submit="handleSubmit"
+        />
+    </div>
 </template>
 
 <script>
 import Autocomplete from '@trevoreyre/autocomplete-vue'
 import '@trevoreyre/autocomplete-vue/dist/style.css'
 import { searchModel } from '../../../API';
+import { mapState } from 'vuex';
 
 export default {
     name: "ReferenceField",
     props: {
         referenceModel: String,
         label: String,
-        value: String
+        value: Object|String
     },
     mounted() {
         if(this.value)
@@ -31,7 +43,8 @@ export default {
     },
     data() {
         return {
-            val: false
+            val: false,
+            dontUpdate: false
         }
     },
     methods: {
@@ -52,12 +65,32 @@ export default {
             return result.label;
         },
         handleSubmit(result) {
-            this.val = result._id;
+            this.val = result;
+        }
+    },
+    computed: {
+        ...mapState(['models']),
+        displayValue(){
+            const referenceModelObject = this.models.find((({name}) => name == this.referenceModel));
+            if(this.val && referenceModelObject)
+                return this.val[referenceModelObject.display_field];
+
+            return null;
         }
     },
     watch: {
+        value: function(newValue){
+            this.dontUpdate = true;
+            this.val = newValue;
+        },
         val: function(newValue){
-            this.$emit('input', newValue);
+            if(this.dontUpdate){
+                this.dontUpdate = false;
+                return;
+            }
+            
+            if(newValue != null)
+                this.$emit('input', newValue);
         }
     },
     components: {

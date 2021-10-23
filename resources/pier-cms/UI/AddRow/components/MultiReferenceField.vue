@@ -37,7 +37,7 @@
     <div class="PierMultiReferenceField relative flex items-center flex-wrap">
         <div v-for="(reference, index) in references" :key="index" 
             class="reference-item bg-gray-100 inline-flex items-center rounded-full pl-3 py-1 text-base mx-1 my-1 border-2 border-gray-300">
-            {{ reference.label }}
+            {{ referenceModelKey ? reference[referenceModelKey] : "" }}
 
             <button type="button" class="inline-flex items-center justify-center w-6 h-6 bg-gray-400 border rounded-full verflow-hidden ml-2 mr-1"
                 @click="removeReference(index)">
@@ -60,6 +60,7 @@
 import Autocomplete from '@trevoreyre/autocomplete-vue'
 import '@trevoreyre/autocomplete-vue/dist/style.css'
 import { searchModel } from '../../../API';
+import { mapState } from 'vuex';
 
 export default {
     name: "MultiReferenceField",
@@ -69,12 +70,13 @@ export default {
         value: Array | String
     },
     mounted() {
-        if(this.value && !this.selectedItems.length)
-            this.selectedItems = this.value;
+        if(this.value && !this.references.length)
+            this.references = this.value;
     },
     data() {
         return {
             val: false,
+            dontUpdate: false,
             references: []
         }
     },
@@ -105,12 +107,31 @@ export default {
             this.$refs.autocomplete.setValue("");
         }
     },
+    computed: {
+        ...mapState(['models']),
+        referenceModelKey(){
+            const referenceModelObject = this.models.find((({name}) => name == this.referenceModel));
+            if(referenceModelObject)
+                return referenceModelObject.display_field;
+
+            return null;
+        }
+    },
     watch: {
+        value: function(newValue){
+            this.dontUpdate = true;
+            if(newValue && !this.references.length)
+                this.references = newValue;
+        },
         references: {
             immediate: true,
             handler: function(){
-                const selectedItems = this.references.map(({_id}) => _id);
-                this.$emit('input', selectedItems);
+                if(this.dontUpdate){
+                    this.dontUpdate = false;
+                    return;
+                }
+                
+                this.$emit('input', this.references);
             }
         }
     },

@@ -25,8 +25,12 @@ import '@trevoreyre/autocomplete-vue/dist/style.css'
 import FieldPreview from "../components/FieldPreview";
 import { getMapLocation } from '../../../Utils';
 
-async function getLocation(location){
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${location}&format=json&limit=10&addressdetails=1`);
+async function getLocation(location, countries = ""){
+    let countryFilter = "";
+    if(countries && countries.length)
+        countryFilter = "&countrycodes="+countries;
+
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${location}&format=json&limit=10&addressdetails=1${countryFilter}`);
     const results = await response.json();
 
     return results.map(({display_name, lon, lat}) => ({
@@ -41,9 +45,12 @@ export default {
     props: {
         referenceModel: String,
         label: String,
-        value: String
+        meta: Object|String,
+        value: Object|String
     },
     mounted() {
+        console.log("Location Meta: ", this.meta);
+
         if(this.value)
             this.val = this.value;
     },
@@ -58,7 +65,7 @@ export default {
 
             return new Promise(async (resolve, reject) => {
                 try {
-                    const results = await getLocation(input);
+                    const results = await getLocation(input, this.meta.countries);
                     resolve(results);
                 } catch (error) {
                     reject("Failed to search for field.");

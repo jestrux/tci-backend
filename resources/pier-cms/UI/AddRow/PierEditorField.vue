@@ -80,6 +80,7 @@
         v-else-if="field.type == 'reference'"
         :label="field.label.replace(/_/g, ' ')"
         :reference-model="field.meta.model"
+        :meta="field.meta"
         v-model="val"
       />
       
@@ -129,6 +130,7 @@
         v-else-if="field.type == 'location'"
         :label="field.label"
         v-model="val"
+        :meta="field.meta"
       />
 
       <textarea 

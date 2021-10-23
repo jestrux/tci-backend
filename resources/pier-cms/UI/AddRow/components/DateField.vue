@@ -20,7 +20,7 @@ export default {
     name: "DateField",
     props: {
         field: Object,
-        value: Boolean
+        value: String
     },
     mounted() {
         if(this.value)
@@ -28,7 +28,8 @@ export default {
     },
     data() {
         return {
-            val: false
+            val: false,
+            dontUpdate: false
         }
     },
     computed: {
@@ -61,7 +62,15 @@ export default {
         }
     },
     watch: {
+        value: function(newValue){
+            this.dontUpdate = true;
+            this.val = newValue;
+        },
         val: function(newValue){
+            if(this.dontUpdate){
+                this.dontUpdate = false;
+                return;
+            }
             this.$emit('input', newValue);
         }
     },

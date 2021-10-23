@@ -70,14 +70,32 @@ export default {
     ...mapGetters(["selectedModel"]),
     uploadingFile: function(){
       return false;
-    }
+    },
+    modelFieldsTypes: function(){
+      if(this.selectedModel)
+        return this.selectedModel.fields.reduce((agg, {label, type}) => {
+          return {...agg, [label]: type};
+        }, {});
+      return null;
+    },
   },
   methods: {
     saveRow() {
+      const self = this;
+      const data = Object.fromEntries(Object.entries(this.record).map(function([key, value]){
+        const fieldType = self.modelFieldsTypes[key];
+        if(fieldType == "reference")
+          value = value._id;
+        else if(fieldType == "multi-reference")
+          value = value.map(({_id}) => _id);
+
+        return [key, value];
+      }));
+
       if(this.values)
-        this.$store.dispatch("editRecord", this.record);
+        this.$store.dispatch("editRecord", data);
       else
-        this.$store.dispatch("createRecord", this.record);
+        this.$store.dispatch("createRecord", data);
     }
   },
   components: {
