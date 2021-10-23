@@ -447,6 +447,21 @@ class PierMigration extends Model{
             ->where('_id', $row_id)
             ->update($entry);
 
+        $multi_reference_fields = $fields->filter(function($field){
+            return $field->type == 'multi-reference';
+        });
+
+        if($multi_reference_fields->count() > 0){
+            foreach ($multi_reference_fields as $field) {
+                self::deleteMultiReferences($table_name, $row_id, $field);
+                
+                if(isset($data[$field->label]) && $data[$field->label] != null){
+                    $values = $data[$field->label];
+                    self::populateMultiReferenceRow($table_name, $row_id, $field, $values);
+                }
+            }
+        }
+
         return DB::table($table_name)->where('_id', $row_id)->get();
     }
     
@@ -532,6 +547,13 @@ class PierMigration extends Model{
         }
         
         return $entries;
+    }
+
+    static function deleteMultiReferences($table_name, $row_id, $field){
+        $reference_table = Str::snake($field->label);
+        DB::table($table_name . '_' . $reference_table)
+                ->where($table_name.'_id', "=", $row_id)
+                ->delete();
     }
 
     static function populateMultiReferenceRow($table_name, $row_id, $field, $references = null){
@@ -662,6 +684,7 @@ class PierMigration extends Model{
         $label = $field->label;
         $type = $field->type;
         $meta = isset($field->meta) ? $field->meta : null;
+        $sample_text = "Uniforms, and some understanding similar attempt. I writer improve those bored presentations. Of sofa times years, an from but the descriptions, we anyone whom his motors him concepts are suspicion be for her as and to have venerable, and deceleration is policeman, writing worthy had viable their there's in of location it and of to looked him, uninspired, often he to towards candidates, of an little have good they the form their choose the self-interest. Is picture support felt every in there eminent a now couldn't the hopes must or not the no presented. All my harmonic agency concept";
 
         switch ($type) {
             case 'name':
@@ -699,10 +722,20 @@ class PierMigration extends Model{
                 return json_encode($location);
                 
             case 'long text':
-                return $faker->paragraph;
+                $start_from = $faker->numberBetween(0, 30);
+                return substr(
+                    $sample_text, 
+                    $start_from,
+                    200,
+                );
                 
             case 'string':
-                return $faker->sentence(3, true);
+                $start_from = $faker->numberBetween(0, strlen($sample_text) - 10);
+                return substr(
+                    $sample_text, 
+                    $start_from,
+                    50,
+                );
                 
             case 'number':
                 return $faker->numberBetween(13, 237);
