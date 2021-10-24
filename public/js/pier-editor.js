@@ -10684,6 +10684,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.options = _objectSpread(_objectSpread({}, options), {}, {
         model: {
           value: newValue.name
+        },
+        mainField: {
+          value: newValue.display_field
         }
       });
     },

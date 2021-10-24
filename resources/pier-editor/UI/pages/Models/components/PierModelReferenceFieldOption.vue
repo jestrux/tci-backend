@@ -113,7 +113,8 @@ export default {
 
             this.options = {
                 ...options, 
-                model: { value: newValue.name }
+                model: { value: newValue.name },
+                mainField: { value: newValue.display_field },
             };
         },
         selectedField: function(newValue){
