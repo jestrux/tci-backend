@@ -6,7 +6,10 @@
         ]
     )}}
     :pier-ref="ref"
-    @click="filters = {...filters, where{{$field}}: '{{$value}}'}"
+    @click="filters = {
+        ...filters, 
+        {{$field}}: filters.{{$field}} == '{{$value}}' ? '' : '{{$value}}'
+    }"
 >
     @if(isset($slot) && strlen($slot) > 0)
         {{$slot}}

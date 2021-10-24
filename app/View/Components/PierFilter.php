@@ -12,18 +12,19 @@ class PierFilter extends Component
     public $value;
     public $comparison;
 
-    public function __construct($field, $value = "", $comparison = "=", $activeClass = 'selected')
+    public function __construct($field, $value = "", $comparison = "", $activeClass = 'selected')
     {
-        $this->field = $field;
+        $this->field = "where".$field;
+        $this->field .= $comparison == null ? "" : 'is'.$comparison ;
         $this->value = $value;
         $this->comparison = $comparison;
         $this->activeClass = $activeClass;
 
-        $valueComparison = "filters.where$this->field == '$this->value'";
+        $valueComparison = "filters.$this->field == '$value'";
         if(strlen($value) == 0)
-            $valueComparison = "!filters.where$this->field";
+            $valueComparison = "!filters.$this->field";
             
-        $this->selected = "{'$this->activeClass': $valueComparison}";
+        $this->selected = "{'$activeClass': $valueComparison}";
     }
 
     public function render()

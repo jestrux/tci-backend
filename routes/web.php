@@ -5,23 +5,31 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+Route::view('/', 'home.index');
 
-Route::post('/pier-data-refetch', function (Request $request) {
+Route::get('/chef/{id}', function($id = null){
+    return view('chef', ["id" => $id]);
+});
+
+Auth::routes();
+
+Route::redirect('/pier', '/pier/editor');
+Route::view('/pier/editor', 'pier.editor');
+
+Route::get('/pier/cms', 'CMSController@index')->name('cms');
+Route::post('/upload_file', 'CMSController@upload_file')->name('upload_file');
+Route::get('/link_preview', 'CMSController@link_preview');
+
+Route::post('/pier/data-refetch', function (Request $request) {
+    $rowId = $request->input("rowId");
     $model = $request->input("model");
     $view = $request->input("view");
     $filters = $request->input("filters");
-    $data = PierMigration::browse($model, $filters);
-    $data = ["data" => $data];
+
+    if($rowId == null)
+        $data = PierMigration::browse($model, $filters);
+    else
+        $data = PierMigration::detail($model, $rowId, $filters);
 
     $filename = hash('sha1', $view);
 
@@ -33,26 +41,8 @@ Route::post('/pier-data-refetch', function (Request $request) {
         
     view()->addLocation($file_location);
 
-    return view($filename, $data);
+    return view($filename, ["data" => $data]);
 });
-
-Route::view('/', 'home');
-
-Route::post('test/staging', function (Request $request) {
-    return response()->json([
-        "msg" => "webhook live",
-        "data" => $request->all()
-    ]);
-});
-
-Auth::routes();
-
-Route::redirect('/pier', '/pier/editor');
-Route::view('/pier/editor', 'pier.editor');
-
-Route::get('/pier/cms', 'CMSController@index')->name('cms');
-Route::post('/upload_file', 'CMSController@upload_file')->name('upload_file');
-Route::get('/link_preview', 'CMSController@link_preview');
 
 Route::prefix('model')->group(function () {
     Route::post('/', 'EditorController@create');

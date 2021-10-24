@@ -10,7 +10,7 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data("pierComponent{{$instanceId}}", () => ({
             ref: "pierComponent{{$instanceId}}",
-            filters: {},
+            filters: {!! collect($filters)->toJson() !!},
             async updatePierComponentContent(){
                 const parentEl = this.$el;
                 const activeEl = document.activeElement;
@@ -19,8 +19,13 @@
                 const model = "{{$model}}";
                 const view = encodeURIComponent(`{{$slot}}`);
                 // exclude filters with empty, null or undefined values
-                const filters = Object.fromEntries(Object.entries(this.filters).filter(([key, value]) => value !== null && value !== undefined && value.length ));
-                const res = await fetch("/pier-data-refetch", {
+                let filters = Object.fromEntries(Object.entries(this.filters).filter(([key, value]) => value !== null && value !== undefined && value.length ));
+                filters = Object.fromEntries(Object.entries(filters).map(([key, value], i) => {
+                    key = i == 0 ? key : key.replace("where", "andWhere");
+                    return [key, value];
+                }));
+                
+                const res = await fetch("/pier/data-refetch", {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json'

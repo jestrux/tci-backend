@@ -160,6 +160,16 @@ class PierMigration extends Model{
         return $results;
     }
     
+    static function browse_model($model, $params = null){
+        $db_model = self::describe($model);
+        $data = self::browse($model, $params);
+
+        return [
+            "model" => $db_model,
+            "data" => $data,
+        ];
+    }
+
     static function browse($model, $params = null){
         $db_model = self::describe($model);
         $display_field = $db_model->display_field;
@@ -179,7 +189,7 @@ class PierMigration extends Model{
 
             if($where_params->count() > 0){
                 foreach ($where_params as $index => $param) {
-                    $table_column = strtolower(str_replace(" ", "_", self::pascal_to_sentence(str_replace(["where", "andWhere", "orWhere", "isGreater", "isGreaterOrEqual", "isLess", "isLessOrEqual"], "", $param))));
+                    $table_column = strtolower(str_replace(" ", "_", self::pascal_to_sentence(str_replace(["where", "andWhere", "orWhere", "isGreaterThan", "isGreaterThanOrEqual", "isLessThan", "isLessThanOrEqual"], "", $param))));
                     $copmarators = ["isGreaterThanOrEqual", "isLessThanOrEqual", "isLessThan", "isGreaterThan"];
                     $table_column = strtolower(str_ireplace(" ", "_", self::pascal_to_sentence(str_ireplace(array_merge(["andWhere", "orWhere", "where"], $copmarators), "", $param))));
                     $symbol = collect($copmarators)->first(function ($value, $key) use ($param) {
