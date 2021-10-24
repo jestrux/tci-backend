@@ -3,7 +3,7 @@
 @section('content')
     <section class="py-12 px-12">
         <div class="container mx-auto">
-            <x-pier-data model="Speaker">
+            <x-pier-data model="Speaker" :filters="['limit' => '4']">
                 @verbatim    
                     <div class="flex items-center justify-between mb-8">
                         <h2 class="text-youlead-primary text-3xl font-semibold">
