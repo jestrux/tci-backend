@@ -87,28 +87,33 @@
             <Loader v-if="!records || fetchingRecorsds || populatingRecords" :size="90" />
 
             <div class="py-3" v-else>
-              <p class="block mb-5 text-lg">
+              <p class="block mb-5 text-lg opacity-50">
                 This model doesn't contain any records yet.
               </p>
 
-              <div class="flex items-center justify-center">
-                <button class="mb-2 rounded-btn border border-blue-800 lowercase text-blue-800 text-sm mt-0 ml-1"
+              <div class="mb-2 flex items-center justify-center">
+                <button class="rounded-btn border border-blue-800 lowercase text-blue-800 text-sm mt-0 ml-3"
                   @click="populateRecords(5)">
                   Populate <span class="font-bold">5</span> records
                 </button>
 
-                <button class="mb-2 rounded-btn border border-blue-800 lowercase text-blue-800 text-sm mt-0 ml-1"
+                <button class="rounded-btn border border-blue-800 lowercase text-blue-800 text-sm mt-0 ml-3"
                   @click="populateRecords(10)">
                   Populate <span class="font-bold">10</span> records
                 </button>
+
+                <button class="rounded-btn border border-blue-800 lowercase text-blue-800 text-sm mt-0 ml-3"
+                  @click="populateRecords(25)">
+                  Populate <span class="font-bold">25</span> records
+                </button>
               </div>
 
-              <div class="mx-auto mt-2" style="max-width: 500px">
+              <!-- <div class="mx-auto mt-2" style="max-width: 500px">
                 <DropArea 
                   placeholder="Drag and drop Pier table data JSON File here." 
                   @selected="handleTableDataSelected($event)"
                 />
-              </div>
+              </div> -->
 
               <!-- <button class="mb-2 rounded-btn border border-blue-800 lowercase text-blue-800 text-sm mt-0 ml-1"
                 @click="importJSON()">
